@@ -94,7 +94,7 @@ async function controlBot(action) {
         const res = await fetch(`${API_URL}/${action}`, {
             method: "POST",
             headers: {
-                "x-api-key": API_KEY
+                "X-API-Key": API_KEY
             }
         });
         const data = await res.json();
