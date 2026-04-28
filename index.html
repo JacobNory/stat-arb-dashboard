@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Stat Arb Bot Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #0f172a;
+    color: #e2e8f0;
+    text-align: center;
+    padding: 40px;
+}
+
+h1 {
+    margin-bottom: 10px;
+}
+
+.container {
+    max-width: 600px;
+    margin: auto;
+}
+
+.card {
+    background: #1e293b;
+    padding: 20px;
+    margin: 15px 0;
+    border-radius: 10px;
+}
+
+button {
+    padding: 12px 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.start { background: #22c55e; }
+.stop { background: #ef4444; }
+.restart { background: #f59e0b; }
+.status { background: #3b82f6; }
+.logs { background: #8b5cf6; }
+
+.output {
+    background: black;
+    padding: 15px;
+    margin-top: 15px;
+    text-align: left;
+    height: 200px;
+    overflow-y: scroll;
+    font-size: 12px;
+    border-radius: 6px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>�� Stat Arb Bot Dashboard</h1>
+    <p>Live Control Panel</p>
+
+    <div class="card">
+        <button class="start" onclick="controlBot('start')">Start Bot</button>
+        <button class="stop" onclick="controlBot('stop')">Stop Bot</button>
+        <button class="restart" onclick="controlBot('restart')">Restart Bot</button>
+    </div>
+
+    <div class="card">
+        <button class="status" onclick="getStatus()">Check Status</button>
+        <button class="logs" onclick="getLogs()">View Logs</button>
+    </div>
+
+    <div class="card">
+        <h3>Output</h3>
+        <div id="output" class="output">Waiting for action...</div>
+    </div>
+</div>
+
+<script>
+const API_URL = "http://54.163.80.241:8000";
+const API_KEY = "my-secret-dashboard-key";
+
+function updateOutput(data) {
+    document.getElementById("output").innerText = JSON.stringify(data, null, 2);
+}
+
+async function controlBot(action) {
+    try {
+        const res = await fetch(`${API_URL}/${action}`, {
+            method: "POST",
+            headers: {
+                "x-api-key": API_KEY
+            }
+        });
+        const data = await res.json();
+        updateOutput(data);
+    } catch (err) {
+        updateOutput({error: err.message});
+    }
+}
+
+async function getStatus() {
+    try {
+        const res = await fetch(`${API_URL}/status`);
+        const data = await res.json();
+        updateOutput(data);
+    } catch (err) {
+        updateOutput({error: err.message});
+    }
+}
+
+async function getLogs() {
+    try {
+        const res = await fetch(`${API_URL}/logs`);
+        const data = await res.json();
+        updateOutput(data);
+    } catch (err) {
+        updateOutput({error: err.message});
+    }
+}
+</script>
+
+</body>
+</html>
